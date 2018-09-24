@@ -1,0 +1,473 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RestManager.Pages.MainPage"
+             xmlns:restManager="clr-namespace:RestManager;assembly=RestManager"
+             xmlns:pages="clr-namespace:RestManager.Pages;assembly=RestManager"
+             >
+
+  <!--Ресурсы, ресурс конвертера привязки цвета-->
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <pages:TapColorConverter x:Key="TapColorConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  <!--Основной лейаут-->
+  <StackLayout x:Name="MainSL">
+    <!--Таблица размещения окон-->
+    <Grid x:Name="MainGrid">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="35"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+<!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+      <!--Верхнее меню-->
+      <StackLayout x:Name="MainMenuSL" Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+        
+          <restManager:NPButton Grid.Row="0" Grid.Column="0" x:Name="TablesB" Text="Столы" Clicked="ButtonСтол_OnClicked" FontSize="10" Margin="2" HorizontalOptions="Center"/>
+          <restManager:NPButton Grid.Row="0" Grid.Column="1" x:Name="NewGuest" Text="Новый гость"  Clicked="ButtonГость_OnClicked" FontSize="10" Margin="2" HorizontalOptions="Center"/>
+          <restManager:NPButton Grid.Row="0" Grid.Column="2" x:Name="DelGuest" Text="Удалить гостя"  Clicked="ButtonGuestDel_OnClicked" FontSize="10" Margin="2" HorizontalOptions="Center"/>
+          <restManager:NPButton Grid.Row="0" Grid.Column="3" x:Name="DelTable" Text="Удалить стол" Clicked="DelTable_OnClicked" FontSize="10" Margin="2" HorizontalOptions="Center"/>
+          <restManager:NPButton Grid.Row="0" Grid.Column="4" x:Name="SumB" Text="Сумма" Clicked="ButtonСумм_OnClicked" FontSize="10" Margin="2" HorizontalOptions="Center"/>
+        </Grid>
+        
+      </StackLayout>
+<!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+      <!--Стол и заголовок стола-->
+      <StackLayout x:Name="OrderSL" Grid.Row="1" Grid.Column="0">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          
+          <!--Заголовок-->
+          <BoxView
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 BackgroundColor="DarkCyan"/>
+          <Grid Grid.Row="0"
+                Grid.Column="0">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="60"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+        
+            <Label Text="Заказы"
+                 x:Name="LabelN_TB"
+                 Grid.Row="0"
+                 Grid.Column="1"
+                 FontSize="18"
+                 HorizontalOptions="CenterAndExpand"/>
+          </Grid>
+      
+          <!--Стол-->
+          <ListView Grid.Column="0"
+                    Grid.Row="1"
+                    x:Name="ordersList"
+                    HasUnevenRows="True"
+                    ItemsSource="{Binding GuestsGroups}"
+                    IsGroupingEnabled="True"
+                    ItemTapped="OrdersList_OnItemTappedЗаказ"
+                    RowHeight="60"
+                    SeparatorVisibility="Default"
+                    SeparatorColor="DarkCyan"
+                  >
+            <ListView.GroupHeaderTemplate>
+              <DataTemplate>
+                <ViewCell Height="30">
+                  <BoxView BackgroundColor="CadetBlue">
+                  </BoxView>
+                  <Label Text="{Binding Name, StringFormat='{0:D} гость'}" FontSize="15"/>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.GroupHeaderTemplate>
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <StackLayout Padding="0">
+                    <Grid BackgroundColor="{Binding заказ, Converter={StaticResource TapColorConverter}}" >
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                      </Grid.RowDefinitions>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
+                      </Grid.ColumnDefinitions>
+
+                      <Label Grid.Row="0" Grid.Column="0" Text="Блюдо:" FontSize="12" />
+                      <Label Grid.Row="0" Grid.Column="1" Text="{Binding названиеблюда}" FontSize="12"/>
+                      <Label Grid.Row="0" Grid.Column="2" Text="{Binding цена, StringFormat='{0:0}р.'}" FontSize="12"/>
+                      <Label Grid.Row="0" Grid.Column="3" Text="{Binding калории, StringFormat='{0:D} кл'}" FontSize="12"/>
+                      <restManager:NPButton Grid.Row="0" Grid.Column="4" Text="{Binding номеркурса, StringFormat='{0:D}к'}" Clicked="ButtonChКурс_OnClicked" FontSize="8" Margin="2"/>
+                      <restManager:NPButton Grid.Row="0" Grid.Column="5" Text="-" Clicked="ButtonDelDish_OnClicked" FontSize="8" MinimumHeightRequest="20" HorizontalOptions="FillAndExpand" Margin="2"/>
+
+                      <Label Grid.Row="1" Grid.Column="0" Text="Добавки:" FontSize="12"/>
+                      <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding названиедобавок}" FontSize="12"/>
+                      <restManager:NPButton Grid.Row="1" Grid.Column="4" Text="+" Clicked="ButtonДобавкиЗаказ_OnClicked" FontSize="8" Margin="2"/>
+                      <restManager:NPButton Grid.Row="1" Grid.Column="5" Text="-" Clicked="ButtonDelДобавки_OnClicked" FontSize="8" Margin="2"/>
+
+                      <restManager:NPButton Grid.Row="2" Grid.Column="0" Text="Коммент" Clicked="ButtonКомментарий_OnClicked" FontSize="8" Margin="2"/>
+                      <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="5" Text="{Binding комментарий}" FontSize="12"/>
+                    </Grid>
+
+                  </StackLayout>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+      
+          <!--Комментарий-->
+          <StackLayout x:Name="CommSL" Grid.Column="0"
+                       Grid.Row="1">
+            <Entry x:Name="CommEntry" Completed="BCommSave_OnClicked"/>
+            <restManager:NPButton Text="Сохранить комментарий" Clicked="BCommSave_OnClicked" WidthRequest="200" HorizontalOptions="Center"/>
+            <restManager:NPButton Text="Отмена" Clicked="BCanComm_OnClicked" WidthRequest="200" HorizontalOptions="Center"/>
+          </StackLayout>
+        </Grid>
+      </StackLayout>
+<!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+      <!--Меню-->
+      <StackLayout x:Name="BotSL" Grid.Row="2" Grid.Column="0">
+        
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          
+          <!--Заголовок-->
+          <BoxView
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 BackgroundColor="DarkCyan"/>
+          <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="60"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+      
+            <restManager:NPButton
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 Text="Назад"
+                 Clicked="BackMenuButton_OnClicked" FontSize="12" Margin="2"/>
+            <Label Text="Меню"
+                 Grid.Row="0"
+                 Grid.Column="1"
+                 FontSize="18"
+                 HorizontalOptions="CenterAndExpand"/>
+            <restManager:NPButton
+                 Grid.Row="0"
+                 Grid.Column="2"
+                 Text="Поиск" Clicked="SearchMenuButton_OnClicked" FontSize="12" Margin="2"/>
+          </Grid>
+      
+          <!--Лист категорий и меню-->
+          <ListView Grid.Column="0"
+                    Grid.Row="1"
+                    x:Name="CatList"
+                    HasUnevenRows="True"
+                    ItemTapped="CatList_OnItemTapped"
+                    RowHeight="30">
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <StackLayout>
+                    <Label Text="{Binding Название}" FontSize="12"/>
+                  </StackLayout>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+
+          <ListView Grid.Column="0"
+                    Grid.Row="1"
+                    x:Name="MenuList"
+                    ItemsSource=""
+                    IsVisible="True"
+                    RowHeight="30"
+                    SeparatorColor="DarkCyan"
+                    ItemTapped="DishAdd_OnTapped">
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <ViewCell.View>
+                    <Grid>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                      </Grid.RowDefinitions>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="30"/>
+
+                      </Grid.ColumnDefinitions>
+                      <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Text="{Binding Название}" FontSize="12" />
+                      <Label Grid.Column="1" Grid.Row="0" Text="{Binding Цена, StringFormat='{0:0}р.'}" FontSize="12" />
+                      <Label Grid.Column="2" Grid.Row="0" Text="{Binding Калории, StringFormat='{0:D} кл'}" FontSize="12" />
+                      <restManager:NPButton Grid.Column="3" Grid.Row="0" Text="С/Д" Clicked="ButtonAddДобавкиИБлюдо_OnClicked" FontSize="10" Margin="2"/>
+                    </Grid>
+                  </ViewCell.View>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+        
+        </Grid>
+      </StackLayout>
+<!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+      <!--Список столов-->
+      <StackLayout x:Name="TableSL" Grid.Row="1"  Grid.Column="0">
+        
+        
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+          </Grid.ColumnDefinitions>
+        
+          <BoxView
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 Grid.ColumnSpan="2"
+                 BackgroundColor="DarkCyan"/>
+          <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="60"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+            
+            <Label Text="Столы"
+                 Grid.Row="0"
+                 Grid.Column="1"
+                 FontSize="18"
+                 HorizontalOptions="CenterAndExpand"/>
+          </Grid>
+          
+          <!--Добавить стол-->
+          <StackLayout x:Name="NewTBSL" Grid.Column="1"
+                       Grid.Row="1">
+            <Entry x:Name="TableAddEntry" Completed="BAddTable_OnClicked"/>
+            <restManager:NPButton Text="Добавить" Clicked="BAddTable_OnClicked"/>
+      
+          </StackLayout>
+      
+          <!--Список столов-->
+          <ListView Grid.Column="0"
+                    Grid.Row="1"
+                    x:Name="tablesList"
+                    HasUnevenRows="True"
+                    ItemsSource="{Binding Tables}"
+                    ItemTapped="TablesList_OnItemTapped"
+                    RowHeight="60">
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <StackLayout>
+                    <Label Text="{Binding номерстола, StringFormat='{0:D} стол'}"  FontSize="20"/>
+                  </StackLayout>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+        
+        </Grid>
+      </StackLayout>
+<!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->      
+      <!--Добавки-->
+      <StackLayout x:Name="AddSL" Grid.Row="1" Grid.Column="0">
+        
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          
+          <!--Разделитель 2-->
+          <BoxView 
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 BackgroundColor="DarkCyan"/>
+          <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="60"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+            
+            <restManager:NPButton 
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 Text="Назад"
+                 Clicked="BackAddButton_OnClicked" FontSize="12" Margin="2"/>
+            <Label Text="Добавки"
+                 Grid.Row="0"
+                 Grid.Column="1"
+                 FontSize="18"
+                 HorizontalOptions="CenterAndExpand"/>
+          </Grid>
+          
+          <ListView 
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    x:Name="AdditivesList"
+                    ItemsSource="{Binding Additives}"
+                    RowHeight="20"
+                    SeparatorColor="DarkCyan"
+                    ItemTapped="ButtonAddДоб_OnClicked"
+                  >
+
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <ViewCell.View>
+                    <Grid>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                      </Grid.RowDefinitions>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="40"/>
+
+                      </Grid.ColumnDefinitions>
+                      <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Text="{Binding Название}" FontSize="12" />
+                      <Label Grid.Column="1" Grid.Row="0" Text="{Binding Цена, StringFormat='{0:0}р.'}" FontSize="12" />
+                    </Grid>
+                  </ViewCell.View>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+        
+        
+      </Grid>        
+    </StackLayout>   
+<!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+    <!--Поиск-->
+    <StackLayout x:Name="SchSL" Grid.Row="1" Grid.Column="0">
+      
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height = "30"/>
+          <RowDefinition Height = "*"/>
+        </Grid.RowDefinitions>
+        
+        <!--Заголовок-->
+          <BoxView
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 BackgroundColor="DarkCyan"/>
+          <Grid Grid.Row="0"
+                Grid.Column="0">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="60"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+        
+
+            <SearchBar x:Name="SearchBar"
+                 Grid.Row="0"
+                 Grid.Column="1" Grid.ColumnSpan="2"
+                 SearchButtonPressed="SearchBar_OnSearchButtonPressed"/>
+            <restManager:NPButton
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 Text="Назад"
+                 Clicked="BackSchButton_OnClicked" FontSize="12" Margin="2"/>
+          </Grid>
+      
+        <ListView Grid.Column="0"
+                    Grid.Row="1"
+                    x:Name="SchList"
+                    ItemsSource=""
+                    IsVisible="True"
+                    RowHeight="30"
+                    SeparatorColor="DarkCyan"
+                    ItemTapped="DishAdd_OnTapped">
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <ViewCell.View>
+                    <Grid>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                      </Grid.RowDefinitions>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="30"/>
+
+                      </Grid.ColumnDefinitions>
+                      <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Text="{Binding Название}" FontSize="12" />
+                      <Label Grid.Column="1" Grid.Row="0" Text="{Binding Цена, StringFormat='{0:0}р.'}" FontSize="12" />
+                      <Label Grid.Column="2" Grid.Row="0" Text="{Binding Калории, StringFormat='{0:D} кл'}" FontSize="12" />
+                      <restManager:NPButton Grid.Column="3" Grid.Row="0" Text="С/Д" Clicked="ButtonAddДобавкиИБлюдо_OnClicked" FontSize="10" Margin="2"/>
+                    </Grid>
+                  </ViewCell.View>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+      </Grid>
+       
+    </StackLayout>
+    </Grid>
+  
+  </StackLayout>  
+</ContentPage>
